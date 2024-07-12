@@ -1,17 +1,16 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import CategoryService from './service';
-import { body, validationResult } from 'express-validator';
+import { body, query, validationResult } from 'express-validator';
 
 const router = Router();
 const categoryService = new CategoryService();
 
 router.post(
   '/',
-  [
-    body('slug').notEmpty().isString(),
-    body('name').notEmpty().isString(),
-    body('active').notEmpty().isBoolean(),
-  ],
+  body('slug').notEmpty().isString(),
+  body('name').notEmpty().isString(),
+  body('active').notEmpty().isBoolean(),
+
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const errors = validationResult(req);
@@ -66,14 +65,39 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const categories = await categoryService.getCategories();
-    res.status(200).send(categories);
-  } catch (error) {
-    next(error);
+router.get(
+  '/',
+  query('page').isNumeric().optional(),
+  query('pageSize').isNumeric().isLength({ min: 1, max: 9 }).optional(),
+  query('name').optional().isString().trim(),
+  query('description').optional().isString().trim(),
+  query('search').optional().isString().trim(),
+  query('active').isIn([0, 1, true, false]).toBoolean().optional(),
+  query('sort').optional().isString().trim(),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { page, pageSize, name, description, search, active, sort } =
+        req.query;
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const categories = await categoryService.getCategories(
+        Number(page),
+        Number(pageSize),
+        String(name),
+        String(description),
+        String(search),
+        Boolean(active),
+        String(sort)
+      );
+      res.status(200).send(categories);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 router.get(
   '/slug/:slug',
