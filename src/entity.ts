@@ -22,6 +22,6 @@ export class Categories {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
+  @Column({ type: 'boolean', default: true })
   active: boolean;
 }

@@ -3,12 +3,14 @@ import { createConnection } from 'typeorm';
 import express from 'express';
 import bodyParser from 'body-parser';
 import categoryRoutes from './controller';
+import errorHandler from './middleware';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use('/categories', categoryRoutes);
+app.use(errorHandler);
 
 const startServer = async () => {
   try {
