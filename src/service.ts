@@ -11,8 +11,8 @@ export default class CategoryService {
   }
 
   async getCategories(
-    page: number = 1,
-    pageSize: number = 2,
+    page: number,
+    pageSize: number,
     name?: string,
     description?: string,
     search?: string,

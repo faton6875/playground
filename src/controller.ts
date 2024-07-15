@@ -67,8 +67,8 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
 
 router.get(
   '/',
-  query('page').isNumeric().optional(),
-  query('pageSize').isNumeric().isLength({ min: 1, max: 9 }).optional(),
+  query('page').optional().isNumeric(),
+  query('pageSize').optional().isNumeric().isLength({ min: 1, max: 9 }),
   query('name').optional().isString().trim(),
   query('description').optional().isString().trim(),
   query('search').optional().isString().trim(),
@@ -84,8 +84,8 @@ router.get(
       }
 
       const categories = await categoryService.getCategories(
-        Number(page),
-        Number(pageSize),
+        page ? Number(page) : 1,
+        pageSize ? Number(pageSize) : 2,
         String(name),
         String(description),
         String(search),
