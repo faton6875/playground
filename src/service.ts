@@ -65,6 +65,7 @@ export default class CategoryService {
       addPaginationParamsToQuery();
       return await query.getMany();
     } catch (error) {
+      console.log(error);
       this.handleServiceError(error);
     }
   }
@@ -72,7 +73,7 @@ export default class CategoryService {
   async getCategoryById(id: string): Promise<Categories> {
     try {
       const categoryRepository = getRepository(Categories);
-      const category = await categoryRepository.findOne(id);
+      const category = await categoryRepository.findOneBy({ id });
       if (!category) {
         throw new Error('Category not found');
       } else {
@@ -102,7 +103,7 @@ export default class CategoryService {
   async deleteById(id: string): Promise<void> {
     try {
       const categoryRepository = getRepository(Categories);
-      const category = await categoryRepository.findOne(id);
+      const category = await categoryRepository.findOneById(id);
       if (!category) {
         throw new Error('Category not found');
       } else {
@@ -117,13 +118,13 @@ export default class CategoryService {
     try {
       const categoryRepository = getRepository(Categories);
 
-      const category = await categoryRepository.findOne(id);
+      const category = await categoryRepository.findOneById(id);
 
       if (!category) {
         throw new Error('Category not found');
       } else {
         await categoryRepository.update(id, newData);
-        return await categoryRepository.findOne(id);
+        return await categoryRepository.findOneById(id);
       }
     } catch (error) {
       this.handleServiceError(error);

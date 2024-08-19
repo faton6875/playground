@@ -4,12 +4,14 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import categoryRoutes from './controller';
 import errorHandler from './middleware';
+import postRoutes from './controllers/post.controller';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT ?? 3000;
 
 app.use(bodyParser.json());
 app.use('/categories', categoryRoutes);
+app.use('/posts', postRoutes);
 app.use(errorHandler);
 
 const startServer = async () => {
