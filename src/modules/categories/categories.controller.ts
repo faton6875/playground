@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import CategoryService from './service';
+import CategoryService from './categories.service';
 import { body, query, validationResult } from 'express-validator';
 
 const router = Router();

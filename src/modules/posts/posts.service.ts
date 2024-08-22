@@ -1,5 +1,5 @@
-import { connectToDatabase } from '../mongo.config';
-import client from '../redis.config';
+import { connectToDatabase } from '../../config/mongo.config';
+import client from '../../config/redis.config';
 
 let collection;
 connectToDatabase().then((db) => {
@@ -14,10 +14,15 @@ const createPost = async (body) => {
 };
 
 const getPosts = async () => {
-  client.set('posts', 'dfdf');
+  await client.del('posts');
   const posts = await client.get('posts');
-  console.log(posts);
-  return await collection.find({}).toArray();
+  if (posts) {
+    return JSON.parse(posts);
+  } else {
+    const res = await collection.find({}).toArray();
+    client.set('posts', JSON.stringify(res));
+    return res;
+  }
 };
 
 export { createPost, getPosts };

@@ -6,9 +6,7 @@ export const connectToDatabase = async (): Promise<Db> => {
   if (db) {
     return db;
   }
-
   const client = new MongoClient('mongodb://root:example@mongo:27017');
-
   try {
     await client.connect();
     db = client.db('mydatabase');

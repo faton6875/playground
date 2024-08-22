@@ -1,5 +1,6 @@
 import { getRepository } from 'typeorm';
-import { Categories } from './entity';
+import { Categories } from './categories.entity';
+import { AppDataSource } from '../../config/data-source';
 
 export default class CategoryService {
   private handleServiceError(error: unknown): never {
@@ -58,7 +59,7 @@ export default class CategoryService {
           query.orderBy('category.createdAt', 'DESC');
         }
       };
-      const categoryRepository = getRepository(Categories);
+      const categoryRepository = AppDataSource.getRepository(Categories);
       const query = categoryRepository.createQueryBuilder('category');
       addFilteringParamsToQuery();
       addSortingParamsToQuery();
@@ -72,7 +73,7 @@ export default class CategoryService {
 
   async getCategoryById(id: string): Promise<Categories> {
     try {
-      const categoryRepository = getRepository(Categories);
+      const categoryRepository = AppDataSource.getRepository(Categories);
       const category = await categoryRepository.findOneBy({ id });
       if (!category) {
         throw new Error('Category not found');
@@ -86,7 +87,7 @@ export default class CategoryService {
 
   async getCategoryBySlug(slug: string): Promise<Categories> {
     try {
-      const categoryRepository = getRepository(Categories);
+      const categoryRepository = AppDataSource.getRepository(Categories);
       const category = await categoryRepository.findOne({
         where: { slug: slug },
       });
@@ -102,7 +103,7 @@ export default class CategoryService {
 
   async deleteById(id: string): Promise<void> {
     try {
-      const categoryRepository = getRepository(Categories);
+      const categoryRepository = AppDataSource.getRepository(Categories);
       const category = await categoryRepository.findOneById(id);
       if (!category) {
         throw new Error('Category not found');
@@ -116,7 +117,7 @@ export default class CategoryService {
 
   async patchCategoryById(id: string, newData: Partial<Categories>) {
     try {
-      const categoryRepository = getRepository(Categories);
+      const categoryRepository = AppDataSource.getRepository(Categories);
 
       const category = await categoryRepository.findOneById(id);
 
@@ -133,7 +134,7 @@ export default class CategoryService {
 
   async createCategory(newData: Categories) {
     try {
-      const categoryRepository = getRepository(Categories);
+      const categoryRepository = AppDataSource.getRepository(Categories);
       return await categoryRepository.save(newData);
     } catch (error) {
       this.handleServiceError(error);

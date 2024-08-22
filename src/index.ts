@@ -1,10 +1,10 @@
 import 'reflect-metadata';
-import { createConnection } from 'typeorm';
 import express from 'express';
 import bodyParser from 'body-parser';
-import categoryRoutes from './controller';
+import categoryRoutes from './modules/categories/categories.controller';
 import errorHandler from './middleware';
-import postRoutes from './controllers/post.controller';
+import postRoutes from './modules/posts/post.controller';
+import { AppDataSource } from './config/data-source';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -14,17 +14,11 @@ app.use('/categories', categoryRoutes);
 app.use('/posts', postRoutes);
 app.use(errorHandler);
 
-const startServer = async () => {
-  try {
-    await createConnection();
-    console.log('Connected to the database');
-
+AppDataSource.initialize()
+  .then(async () => {
     app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+      console.log('Server is running on http://localhost:' + PORT);
     });
-  } catch (error) {
-    console.error('Error connecting to the database', error);
-  }
-};
-
-startServer();
+    console.log('Data Source has been initialized!');
+  })
+  .catch((error) => console.log(error));

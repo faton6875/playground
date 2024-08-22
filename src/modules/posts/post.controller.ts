@@ -1,4 +1,4 @@
-import { createPost, getPosts } from '../services/posts.service';
+import { createPost, getPosts } from './posts.service';
 import { Router, Request, Response, NextFunction } from 'express';
 
 const router = Router();
