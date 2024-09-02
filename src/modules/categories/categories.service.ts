@@ -1,4 +1,3 @@
-import { getRepository } from 'typeorm';
 import { Categories } from './categories.entity';
 import { AppDataSource } from '../../config/data-source';
 

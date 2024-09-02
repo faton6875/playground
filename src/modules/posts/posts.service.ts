@@ -1,20 +1,31 @@
+import { Collection } from 'mongodb';
 import { connectToDatabase } from '../../config/mongo.config';
 import client from '../../config/redis.config';
+import event from '../../logger';
+import { Post } from './interfaces';
 
-let collection;
+let collection: Collection;
+
 connectToDatabase().then((db) => {
   collection = db.collection('posts');
 });
 
-const createPost = async (body) => {
-  return await collection.insertOne({
+const createPost = async (body: Post) => {
+  const newPost = await collection.insertOne({
     title: body.title,
     text: body.text,
   });
+
+  event.emit('createPost', {
+    title: body.title,
+    text: body.text,
+  });
+
+  return newPost;
 };
 
 const getPosts = async () => {
-  await client.del('posts');
+  // await client.del('posts');
   const posts = await client.get('posts');
   if (posts) {
     return JSON.parse(posts);
